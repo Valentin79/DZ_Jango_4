@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from dz_3_app.models import Order, User, Goods
 from .forms import EditGoods, GoodsChoice, ImageForm
 
-goods_id = None
+# goods_id = None
 
 
 def index(request):
@@ -41,13 +41,13 @@ def user_orders(request, user_id, days):
 def choose_goods(request):
     if request.method == 'POST':
         form = GoodsChoice(request.POST)
-        global goods_id
+        # global goods_id
         goods_id = form.data['goods']
         option = form.data['option']
         if option == '1':
-            return redirect('edit_goods')
+            return redirect('edit_goods', goods_id)
         elif option == '2':
-            return redirect('upload_image')
+            return redirect('upload_image', goods_id)
 
     else:
         form = GoodsChoice()
@@ -55,7 +55,7 @@ def choose_goods(request):
                       context={'form': form, 'title': 'Выбрать товар'})
 
 
-def edit_goods(request):
+def edit_goods(request, goods_id=None):
     goods = Goods.objects.filter(pk=goods_id).first()
     if request.method == 'POST':  # and request.FILES
         # print('OK1')
@@ -94,7 +94,7 @@ def edit_goods(request):
                       }})
 
 
-def add_image(request):
+def add_image(request, goods_id=None):
     goods = Goods.objects.filter(pk=goods_id).first()
     if request.method == 'POST':
         form = ImageForm(request.POST, request.FILES)
